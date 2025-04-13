@@ -74,3 +74,34 @@ resource "aws_security_group" "sg_jump_act3_pfdls" {
     Name = "act3-sg-jump-pfdls"
   }
 }
+# Security Group para Web Servers
+resource "aws_security_group" "sg_web_act3_pfdls" {
+  name        = "act3-sg-web-pfdls"
+  description = "Permitir HTTP publico y SSH desde Jump - PFDLS"
+  vpc_id      = aws_vpc.vpc_act3_pfdls.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.sg_jump_act3_pfdls.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "act3-sg-web-pfdls"
+  }
+}
