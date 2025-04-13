@@ -105,3 +105,32 @@ resource "aws_security_group" "sg_web_act3_pfdls" {
     Name = "act3-sg-web-pfdls"
   }
 }
+
+# Jump Server
+resource "aws_instance" "jump_act3_pfdls" {
+  ami                         = "ami-084568db4383264d4"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.subred_publica_act3_pfdls.id
+  key_name                    = "vockey"
+  vpc_security_group_ids      = [aws_security_group.sg_jump_act3_pfdls.id]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "act3-jump-server-pfdls"
+  }
+}
+
+# Web Servers (x3)
+resource "aws_instance" "web_act3_pfdls" {
+  count                       = 3
+  ami                         = "ami-084568db4383264d4"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.subred_publica_act3_pfdls.id
+  key_name                    = "vockey"
+  vpc_security_group_ids      = [aws_security_group.sg_web_act3_pfdls.id]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "act3-web-server-${count.index + 1}-pfdls"
+  }
+}
